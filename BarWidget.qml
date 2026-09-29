@@ -59,11 +59,21 @@ BarWidget {
                    "--urgency=" + (urgency || "normal"), title, body || ""])
   }
 
-  // The window, or the one already open: OmaScan allows only one.
+  // The window, or the one already open: OmaScan allows only one. Matched on
+  // its class alone (its Wayland app_id). omarchy-launch-or-focus also
+  // matches titles, so a browser tab about OmaScan would take the focus.
+  readonly property string focusOrLaunch: `
+    address=$(hyprctl clients -j | jq -r 'first(.[] | select(.class == "omascan") | .address) // empty')
+    if [ -n "$address" ]; then
+      hyprctl dispatch "hl.dsp.focus({ window = \\"address:$address\\" })" >/dev/null 2>&1 ||
+        hyprctl dispatch focuswindow "address:$address"
+    else
+      exec setsid uwsm-app -- "$1"
+    fi`
+
   function openApp() {
-    // omarchy-launch-or-focus evals the launch command, so the path is quoted.
-    var quoted = "'" + root.command.replace(/'/g, "'\\''") + "'"
-    Util.execArgv(["omarchy-launch-or-focus", "omascan", "uwsm-app -- " + quoted])
+    // The command arrives as $1, never as part of the script.
+    Util.execArgv(["bash", "-c", root.focusOrLaunch, "bash", root.command])
   }
 
   function scanOrCancel() {
