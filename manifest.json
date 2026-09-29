@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "id": "guilhermetk.omascan",
+  "name": "OmaScan",
+  "version": "0.1.0",
+  "author": "Guilherme Tiscoski",
+  "license": "GPL-3.0-or-later",
+  "description": "Scan a page from the bar with one click: a finished PDF in Documents or PNG in Pictures. Needs the OmaScan app.",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "OmaScan",
+    "description": "One click scans a page with your saved scanner and settings. Click again to cancel; right-click opens OmaScan.",
+    "category": "Utilities",
+    "aliases": ["scan", "scanner"],
+    "allowMultiple": false,
+    "defaultSection": "right",
+    "defaults": {
+      "format": "Saved choice",
+      "command": "omascan"
+    },
+    "schema": [
+      {
+        "key": "format",
+        "type": "enum",
+        "label": "Save as",
+        "options": ["Saved choice", "PDF", "PNG"],
+        "defaultValue": "Saved choice",
+        "description": "PDF goes to Documents, PNG to Pictures. Saved choice is the one from `omascan setup`."
+      },
+      {
+        "key": "command",
+        "type": "string",
+        "label": "OmaScan command",
+        "defaultValue": "omascan",
+        "description": "Only needed for a build outside PATH, e.g. ~/omascan/build/omascan."
+      }
+    ]
+  }
+}
